@@ -1,14 +1,14 @@
 package com.csaralameda.reservashotel.dto;
 
-import com.csaralameda.reservashotel.models.User;
+import com.csaralameda.reservashotel.models.Users;
 
 public record UserDTO(
         Long id,
         String username,
         String email,
-        User.Role role
+        Users.Role role
 ) {
-    public static UserDTO fromEntity(User user) {
+    public static UserDTO fromEntity(Users user) {
         return new UserDTO(
                 user.getId(),
                 user.getUsername(),
