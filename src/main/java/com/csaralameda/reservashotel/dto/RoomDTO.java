@@ -10,6 +10,7 @@ public record RoomDTO(
         Double price,
         Integer capacity,
         Boolean isAvailable,
+        Integer idUser,
         Set<ServiceDTO> services
 ) {
     public static RoomDTO fromEntity(Room room) {
@@ -19,6 +20,7 @@ public record RoomDTO(
                 room.getPrice(),
                 room.getCapacity(),
                 room.getAvailable(),
+                room.getIdUser(),
                 room.getServices().stream()
                         .map(ServiceDTO::fromEntity)
                         .collect(Collectors.toSet())

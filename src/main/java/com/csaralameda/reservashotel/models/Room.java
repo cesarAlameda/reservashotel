@@ -1,8 +1,12 @@
 package com.csaralameda.reservashotel.models;
 
+import com.csaralameda.reservashotel.services.Service;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +14,7 @@ import java.util.Set;
 @Table(name = "rooms")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Room {
 
     @Id
@@ -25,8 +30,12 @@ public class Room {
     @Column(nullable = false)
     private Integer capacity;
 
-    @Column(nullable = false)
-    private Boolean isAvailable = true;
+    @Column(name = "available", nullable = false)
+    private Boolean available = true;
+
+    @Column(name = "id_user", nullable = false)
+    private Integer idUser;
+
 
     public Long getId() {
         return id;
@@ -61,11 +70,19 @@ public class Room {
     }
 
     public Boolean getAvailable() {
-        return isAvailable;
+        return available;
     }
 
     public void setAvailable(Boolean available) {
-        isAvailable = available;
+        this.available = available;
+    }
+
+    public Integer getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Integer idUser) {
+        this.idUser = idUser;
     }
 
     public Set<Service> getServices() {
@@ -82,10 +99,11 @@ public class Room {
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
+    @JsonManagedReference  // lado “padre” de Room→Service
     private Set<Service> services = new HashSet<>();
 
     public void addService(Service service) {
-        this.services.add(service);
+        services.add(service);
         service.getRooms().add(this);
     }
 }

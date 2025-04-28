@@ -1,6 +1,6 @@
 package com.csaralameda.reservashotel.dto;
 
-import com.csaralameda.reservashotel.models.Service;
+import com.csaralameda.reservashotel.services.Service;
 
 public record ServiceDTO(
         Long id,

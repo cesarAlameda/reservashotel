@@ -1,7 +1,7 @@
 package com.csaralameda.reservashotel.controllers;
 
 import com.csaralameda.reservashotel.dto.UserDTO;
-import com.csaralameda.reservashotel.models.Users;
+import com.csaralameda.reservashotel.models.User;
 import com.csaralameda.reservashotel.repositories.UsersRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,38 +19,38 @@ public class UserController {
     }
 
     @GetMapping
-    public Iterable<Users> getUsers() {
+    public Iterable<User> getUsers() {
         return this.usersRepository.findAll();
     }
 
     @GetMapping({"/{idUser}"})
-    public ResponseEntity<Users> getUserById(@PathVariable("idUser") Long idUser) {
-        Optional<Users> users = this.usersRepository.findById(idUser);
+    public ResponseEntity<User> getUserById(@PathVariable("idUser") Long idUser) {
+        Optional<User> users = this.usersRepository.findById(idUser);
         if (users.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            Users usersObj = (Users) users.get();
-            return ResponseEntity.ok(usersObj);
+            User userObj = (User) users.get();
+            return ResponseEntity.ok(userObj);
         }
     }
 
     @PostMapping
     public ResponseEntity<Void> postUser(@RequestBody UserDTO userDTO) {
-        Users users = new Users();
-        users.setUsername(userDTO.username());
-        this.usersRepository.save(users);
+        User user = new User();
+        user.setUsername(userDTO.username());
+        this.usersRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping({"/{idUser}"})
     public ResponseEntity<Void> putUser(@PathVariable("idUser") Long idUsers, @RequestBody UserDTO userDTO) {
-        Optional<Users> usersOptional = this.usersRepository.findById(idUsers);
+        Optional<User> usersOptional = this.usersRepository.findById(idUsers);
         if (usersOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            Users usersObj = (Users) usersOptional.get();
-            usersObj.setUsername(userDTO.username());
-            this.usersRepository.save(usersObj);
+            User userObj = (User) usersOptional.get();
+            userObj.setUsername(userDTO.username());
+            this.usersRepository.save(userObj);
             return ResponseEntity.ok().build();
         }
     }
