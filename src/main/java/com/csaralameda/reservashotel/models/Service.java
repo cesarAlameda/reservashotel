@@ -1,7 +1,5 @@
-package com.csaralameda.reservashotel.services;
+package com.csaralameda.reservashotel.models;
 
-import com.csaralameda.reservashotel.models.Booking;
-import com.csaralameda.reservashotel.models.Room;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;

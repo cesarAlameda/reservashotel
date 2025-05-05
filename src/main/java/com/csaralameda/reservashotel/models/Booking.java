@@ -1,6 +1,5 @@
 package com.csaralameda.reservashotel.models;
 
-import com.csaralameda.reservashotel.services.Service;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

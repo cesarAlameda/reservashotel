@@ -76,7 +76,7 @@ public class User {
     }
 
     public UserDTO toDTO() {
-        return new UserDTO(this.id, this.username, this.email, this.role);
+        return new UserDTO( this.id,this.username, this.email,this.password, this.role);
     }
 
     public enum Role {
