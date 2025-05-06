@@ -7,10 +7,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record UserDTO(
         Long id,
-        @NotBlank String username,
-        @NotBlank @Email String email,
-        @NotBlank String password,
-        @NotNull User.Role role
+        String username,
+        @Email String email,
+        String password,
+        User.Role role
 ) {
     public static User fromDTO(UserDTO dto) {
         User user = new User();

@@ -66,6 +66,22 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/{idUser}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("idUser") Long idUser) {
+        Optional<User> userOpt = usersRepository.findById(idUser);
+
+        if (userOpt.isEmpty()) {
+            log.warn("Intento de borrado de usuario no existente: id {}", idUser);
+            return ResponseEntity.notFound().build();
+        }
+
+
+        usersRepository.deleteById(idUser);
+        log.info("Usuario con id {} borrado correctamente", idUser);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+
     @PutMapping("/{idUser}")
     public ResponseEntity<Void> putUser(
             @PathVariable("idUser") Long idUser,
@@ -79,13 +95,18 @@ public class UserController {
 
         try {
             User userObj = usersOptional.get();
-            userObj.setUsername(userDTO.username());
-            userObj.setEmail(userDTO.email());
-            userObj.setRole(userDTO.role());
 
+            if(userDTO.username()!=null || userDTO.username().isEmpty()){
+               userObj.setUsername(userDTO.username());
+            }
+
+            if(userDTO.email()!=null || userDTO.email().isEmpty()){
+                userObj.setEmail(userDTO.email());
+            }
             if (userDTO.password() != null && !userDTO.password().isEmpty()) {
                 userObj.setPassword(passwordEncoder.encode(userDTO.password()));
             }
+            //EL USUARIO NO DEBERIA DE TENER LA POSIBILIDAD DE CAMBIAR DE ROL, AL MENOS NO DESDE UN ENDPOINT
 
             usersRepository.save(userObj);
             log.info("Usuario {} actualizado correctamente", idUser);
