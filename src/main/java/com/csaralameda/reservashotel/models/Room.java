@@ -92,13 +92,13 @@ public class Room {
         this.services = services;
     }
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.MERGE })
     @JoinTable(
             name = "room_services",
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
-    @JsonManagedReference  // lado “padre” de Room→Service
+    @JsonManagedReference
     private Set<Service> services = new HashSet<>();
 
     public void addService(Service service) {

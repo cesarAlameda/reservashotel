@@ -10,7 +10,7 @@ public record RoomDTO(
         Double price,
         Integer capacity,
         Boolean isAvailable,
-        Integer idUser,
+        Integer idUser, //el id user es para saber que usuario la ha creado, si no se quiere saber o no se necesita se pondra 0
         Set<ServiceDTO> services
 ) {
     public static RoomDTO fromEntity(Room room) {

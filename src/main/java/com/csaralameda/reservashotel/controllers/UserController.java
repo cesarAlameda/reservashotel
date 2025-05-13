@@ -46,12 +46,12 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Void> postUser(@Valid @RequestBody UserDTO userDTO) {
         try {
+            log.info("Creando Usuario...");
             User user = new User();
             user.setUsername(userDTO.username());
             user.setEmail(userDTO.email());
             user.setRole(userDTO.role());
             user.setPassword(passwordEncoder.encode(userDTO.password()));
-
             usersRepository.save(user);
             log.info("Usuario creado: {}", user.getUsername());
             return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -68,6 +68,7 @@ public class UserController {
 
     @DeleteMapping("/{idUser}")
     public ResponseEntity<Void> deleteUser(@PathVariable("idUser") Long idUser) {
+        log.info("Borrando Usuario...");
         Optional<User> userOpt = usersRepository.findById(idUser);
 
         if (userOpt.isEmpty()) {
@@ -89,11 +90,12 @@ public class UserController {
     ) {
         Optional<User> usersOptional = usersRepository.findById(idUser);
         if (usersOptional.isEmpty()) {
-            log.warn("Intento de actualización de usuario no existente: id {}", idUser);
+            log.warn("Intento de actualizacion de usuario no existente: id {}", idUser);
             return ResponseEntity.notFound().build();
         }
 
         try {
+            log.info("Actualizando Usuario...");
             User userObj = usersOptional.get();
 
             if(userDTO.username()!=null || userDTO.username().isEmpty()){
