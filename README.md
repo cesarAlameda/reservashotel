@@ -46,3 +46,40 @@ El objetivo es demostrar:
    ```bash
    git clone https://github.com/tu-usuario/reservashotel.git
    cd reservashotel
+
+2. **Configura la conexión a BD**
+Edita src/main/resources/application.properties con tu URL de Supabase y credenciales:
+   ```bash
+      properties
+      Copy
+      Edit
+      spring.datasource.url=jdbc:postgresql://<host>:<puerto>/<db>?sslmode=require
+      spring.datasource.username=<usuario>
+      spring.datasource.password=<contraseña>
+   
+3. **Construye y etiqueta la imagen Docker**
+   ```bash
+   docker build -t reservashotel .
+   
+4. **Ejecuta el contenedor**
+      ```bash
+   docker run -d -p 9525:9525 --name rhotel reservashotel
+
+5. **Prueba los endpoints**
+   
+   GET /user
+   
+   POST /user
+   
+   PUT /user/{id}
+   
+   DELETE /user/{id}
+   
+   De igual forma para /rooms, /bookings, /services, etc.
+
+
+
+
+
+
+
