@@ -88,14 +88,15 @@ public class UserController {
             @PathVariable("idUser") Long idUser,
             @Valid @RequestBody UserDTO userDTO
     ) {
+        log.info("Actualizando Usuario...");
         Optional<User> usersOptional = usersRepository.findById(idUser);
         if (usersOptional.isEmpty()) {
             log.warn("Intento de actualizacion de usuario no existente: id {}", idUser);
             return ResponseEntity.notFound().build();
         }
 
+
         try {
-            log.info("Actualizando Usuario...");
             User userObj = usersOptional.get();
 
             if(userDTO.username()!=null || userDTO.username().isEmpty()){

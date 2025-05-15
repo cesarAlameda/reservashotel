@@ -33,6 +33,18 @@ public class RoomController {
     public Iterable<Room>getRooms(){return this.roomRepository.findAll();}
 
 
+    @GetMapping("/{idRoom}")
+    public ResponseEntity<Room> getRoombyId(@PathVariable ("idRoom") Long idRoom){
+        Optional<Room>roomOpt=roomRepository.findById(idRoom);
+        return roomOpt
+                .map(ResponseEntity::ok)
+                .orElseGet(()->{
+                    log.warn("Usuario con id {} no encontrado", idRoom);
+                    return ResponseEntity.notFound().build();
+                });
+
+    }
+
     @GetMapping({"/available"}) //saber las habitaciones que están disponibles de cara al apartado front
     public Iterable<Room> getRoomsAvaible() {
         ArrayList<Room> rooms = (ArrayList<Room>) this.roomRepository.buscarPorEstado();
@@ -94,6 +106,8 @@ public class RoomController {
     @PutMapping("/{idRoom}")
     public ResponseEntity<Void>putRoom(@PathVariable("idRoom") Long idRoom,
                                        @Valid @RequestBody RoomDTO roomDTO){
+        log.info("Actualizando Habitacion...");
+
         Optional<Room>roomOptional=roomRepository.findById(idRoom);
         if(roomOptional.isEmpty()){
             log.warn("Intento de actualizacion sobre una habitacion no existente: id {}",idRoom);
@@ -102,7 +116,6 @@ public class RoomController {
         //CAMBIO DE type, price, capacity, available, lista de servicios (el resto se mantiene)
 
         try {
-            log.info("Actualizando Habitacion...");
             Room roomObj = roomOptional.get();
 
             //type
