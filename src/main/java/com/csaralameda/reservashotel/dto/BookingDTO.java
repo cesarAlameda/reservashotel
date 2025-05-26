@@ -1,7 +1,7 @@
 package com.csaralameda.reservashotel.dto;
 
 import com.csaralameda.reservashotel.models.Booking;
-import com.csaralameda.reservashotel.models.Room;
+
 
 import java.util.Set;
 import java.util.stream.Collectors;

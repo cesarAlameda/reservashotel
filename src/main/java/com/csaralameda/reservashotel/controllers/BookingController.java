@@ -1,7 +1,6 @@
 package com.csaralameda.reservashotel.controllers;
 
 import com.csaralameda.reservashotel.models.Booking;
-import com.csaralameda.reservashotel.models.User;
 import com.csaralameda.reservashotel.repositories.BookingRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -2,9 +2,7 @@ package com.csaralameda.reservashotel.controllers;
 
 
 import com.csaralameda.reservashotel.dto.ServiceDTO;
-import com.csaralameda.reservashotel.dto.UserDTO;
 import com.csaralameda.reservashotel.models.Service;
-import com.csaralameda.reservashotel.models.User;
 import com.csaralameda.reservashotel.repositories.ServiceRepository;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
