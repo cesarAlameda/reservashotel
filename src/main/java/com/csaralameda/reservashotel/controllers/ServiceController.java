@@ -41,10 +41,10 @@ public class ServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<Void>postService(@Valid @RequestBody ServiceDTO serviceDTO){
-        try{
+    public ResponseEntity<Void> postService(@Valid @RequestBody ServiceDTO serviceDTO) {
+        try {
             log.info("Creando Servicio...");
-            Service service=new Service();
+            Service service = new Service();
             //name, description
 
             service.setName(serviceDTO.name());
@@ -54,11 +54,11 @@ public class ServiceController {
             log.info("Servicio creado: {}", service.getName());
             return ResponseEntity.status(HttpStatus.CREATED).build();
 
-        }catch(DataIntegrityViolationException dive){
+        } catch (DataIntegrityViolationException dive) {
             log.error("Violación de integridad al crear servicio {}: {}",
                     serviceDTO.name(), dive.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Error inesperado al crear servicio {}", serviceDTO.name(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -89,28 +89,39 @@ public class ServiceController {
         log.info("Actualizando Servicio...");
 
         Optional<Service> serviceOptional = serviceRepository.findById(idService);
-        if(serviceOptional.isEmpty()){
+        if (serviceOptional.isEmpty()) {
             log.warn("Intento de actualizacion del servicio no existente: id {}", idService);
             return ResponseEntity.notFound().build();
         }
         //name, description
-        try{
-            Service serviceObj=serviceOptional.get();
+        try {
+            Service serviceObj = serviceOptional.get();
 
-            if(serviceDTO.name()!=null || serviceDTO.name().isEmpty()){
-                serviceObj.setName(serviceDTO.name());
+            String name = serviceDTO.name();
+            if (name != null) {
+                if (!name.isBlank()) {
+                    serviceObj.setName(name);
+                }
+            } else {
+                log.info("Nombre nulo o en blanco a la hora de actualizar el servicio");
             }
 
-            if(serviceDTO.description()!=null || serviceDTO.description().isEmpty()){
-                serviceObj.setDescription(serviceDTO.description());
+            String desc = serviceDTO.description();
+            if (desc != null) {
+                if (!desc.isBlank()) {
+                    serviceObj.setDescription(desc);
+                }
+            } else {
+                log.info("Descripcion nula o en blanco a la hora de actualizar el servicio");
             }
+
 
             serviceRepository.save(serviceObj);
             log.info("Servicio {} actualizado correctamente", idService);
             return ResponseEntity.ok().build();
 
 
-        }catch(DataIntegrityViolationException dive) {
+        } catch (DataIntegrityViolationException dive) {
             log.error("Violación de integridad al actualizar servicio {}: {}", idService, dive.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
@@ -120,13 +131,7 @@ public class ServiceController {
         }
 
 
-
-
     }
-
-
-
-
 
 
 }

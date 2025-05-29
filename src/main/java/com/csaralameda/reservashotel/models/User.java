@@ -32,7 +32,7 @@ public class User {
     private String password; //  BCrypt
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name="role")
+    @Column(name = "role")
     private Role role;
 
     public Long getId() {
@@ -76,7 +76,7 @@ public class User {
     }
 
     public UserDTO toDTO() {
-        return new UserDTO( this.id,this.username, this.email,this.password, this.role);
+        return new UserDTO(this.id, this.username, this.email, this.password, this.role);
     }
 
     public enum Role {

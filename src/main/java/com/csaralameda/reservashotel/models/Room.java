@@ -92,7 +92,7 @@ public class Room {
         this.services = services;
     }
 
-    @ManyToMany(cascade = { CascadeType.MERGE })
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "room_services",
             joinColumns = @JoinColumn(name = "room_id"),

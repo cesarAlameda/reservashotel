@@ -99,15 +99,31 @@ public class UserController {
         try {
             User userObj = usersOptional.get();
 
-            if(userDTO.username()!=null || userDTO.username().isEmpty()){
-               userObj.setUsername(userDTO.username());
+            String name = userDTO.username();
+            if (name != null) {
+                if (!name.isBlank()) {
+                    userObj.setUsername(name);
+                }
+            } else {
+                log.info("Nombre nulo o en blanco a la hora de actualizar el usuario");
             }
 
-            if(userDTO.email()!=null || userDTO.email().isEmpty()){
-                userObj.setEmail(userDTO.email());
+            String email = userDTO.email();
+            if (email != null) {
+                if (!email.isBlank()) {
+                    userObj.setEmail(email);
+                }
+            } else {
+                log.info("Email nulo o en blanco a la hora de actualizar el usuario");
             }
-            if (userDTO.password() != null && !userDTO.password().isEmpty()) {
-                userObj.setPassword(passwordEncoder.encode(userDTO.password()));
+
+            String password = userDTO.password();
+            if (password != null) {
+                if (!password.isBlank()) {
+                    userObj.setPassword(passwordEncoder.encode(password));
+                }
+            } else {
+                log.info("Pass nula o en blanco a la hora de actualizar el usuario");
             }
             //EL USUARIO NO DEBERIA DE TENER LA POSIBILIDAD DE CAMBIAR DE ROL, AL MENOS NO DESDE UN ENDPOINT
 

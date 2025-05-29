@@ -24,21 +24,24 @@ public class RoomController {
     private RoomRepository roomRepository;
     private static final Logger log = LoggerFactory.getLogger(RoomController.class);
     private final ServiceRepository serviceRepository;
+
     public RoomController(RoomRepository roomRepository, ServiceRepository serviceRepository) {
         this.roomRepository = roomRepository;
         this.serviceRepository = serviceRepository;
     }
 
     @GetMapping
-    public Iterable<Room>getRooms(){return this.roomRepository.findAll();}
+    public Iterable<Room> getRooms() {
+        return this.roomRepository.findAll();
+    }
 
 
     @GetMapping("/{idRoom}")
-    public ResponseEntity<Room> getRoombyId(@PathVariable ("idRoom") Long idRoom){
-        Optional<Room>roomOpt=roomRepository.findById(idRoom);
+    public ResponseEntity<Room> getRoombyId(@PathVariable("idRoom") Long idRoom) {
+        Optional<Room> roomOpt = roomRepository.findById(idRoom);
         return roomOpt
                 .map(ResponseEntity::ok)
-                .orElseGet(()->{
+                .orElseGet(() -> {
                     log.warn("Usuario con id {} no encontrado", idRoom);
                     return ResponseEntity.notFound().build();
                 });
@@ -86,31 +89,31 @@ public class RoomController {
 
 
     @DeleteMapping("/{idRoom}")
-    public ResponseEntity<Void>deleteRoom(@PathVariable("idRoom")Long idRoom){
+    public ResponseEntity<Void> deleteRoom(@PathVariable("idRoom") Long idRoom) {
         log.info("Borrando habitacion...");
-        Optional<Room> roomOpt=roomRepository.findById(idRoom);
+        Optional<Room> roomOpt = roomRepository.findById(idRoom);
 
-        if(roomOpt.isEmpty()){
+        if (roomOpt.isEmpty()) {
             log.warn("Intento de borrar a la habitación fallido");
-            log.warn("ID no encontrada: {}",idRoom);
+            log.warn("ID no encontrada: {}", idRoom);
             return ResponseEntity.notFound().build();
         }
 
         roomRepository.deleteById(idRoom);
-        log.info("Habitacion encontrada y borrada perfectamente con id {}",idRoom);
+        log.info("Habitacion encontrada y borrada perfectamente con id {}", idRoom);
         return ResponseEntity.noContent().build();
 
     }
 
 
     @PutMapping("/{idRoom}")
-    public ResponseEntity<Void>putRoom(@PathVariable("idRoom") Long idRoom,
-                                       @Valid @RequestBody RoomDTO roomDTO){
+    public ResponseEntity<Void> putRoom(@PathVariable("idRoom") Long idRoom,
+                                        @Valid @RequestBody RoomDTO roomDTO) {
         log.info("Actualizando Habitacion...");
 
-        Optional<Room>roomOptional=roomRepository.findById(idRoom);
-        if(roomOptional.isEmpty()){
-            log.warn("Intento de actualizacion sobre una habitacion no existente: id {}",idRoom);
+        Optional<Room> roomOptional = roomRepository.findById(idRoom);
+        if (roomOptional.isEmpty()) {
+            log.warn("Intento de actualizacion sobre una habitacion no existente: id {}", idRoom);
             return ResponseEntity.notFound().build();
         }
         //CAMBIO DE type, price, capacity, available, lista de servicios (el resto se mantiene)
@@ -119,26 +122,40 @@ public class RoomController {
             Room roomObj = roomOptional.get();
 
             //type
-            if(roomDTO.type()!=null || roomDTO.type().isEmpty()){
-                roomObj.setType(roomDTO.type());
+            String type = roomDTO.type();
+            if (type != null) {
+                if (!type.isBlank()) {
+                    roomObj.setType(type);
+                }
+            } else {
+                log.info("Tipo de habitación nulo o en blanco al actualizar");
             }
 
             //price
-           if(roomDTO.price()!=null || roomDTO.price()==0){
-                roomObj.setPrice(roomDTO.price());
-           }
-
-           //capacity
-            if(roomDTO.capacity()!=null || roomDTO.capacity()==0){
-                roomObj.setCapacity(roomDTO.capacity());
+            Double price = roomDTO.price();
+            if (price != null) {
+                if (price > 0) {
+                    roomObj.setPrice(price);
+                }
+            } else {
+                log.info("Precio nulo al actualizar");
             }
 
-            //available (nunca será null puesto que es un boolean no un objeto boolean)
+            //capacity
+            Integer capacity = roomDTO.capacity();
+            if (capacity != null) {
+                if (capacity > 0) {
+                    roomObj.setCapacity(capacity);
+                }
+            } else {
+                log.info("Capacidad nula al actualizar");
+            }
+
+            //available (nunca será null puesto que es un boolean primitivo)
             roomObj.setAvailable(roomDTO.isAvailable());
 
-
             //services(dando por hecho que alguna habitacion puede no tener ningun servicio)
-            if (roomDTO.services()!=null) {
+            if (roomDTO.services() != null) {
 
 
                 roomObj.getServices().clear();
@@ -168,8 +185,6 @@ public class RoomController {
 
 
     }
-
-
 
 
 }

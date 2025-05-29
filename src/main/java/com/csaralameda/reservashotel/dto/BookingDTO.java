@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public record  BookingDTO(
+public record BookingDTO(
         Long id,
         String startDate,
         String endDate,

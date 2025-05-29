@@ -24,10 +24,10 @@ public class Booking {
     @Column(nullable = false)
     private String endDate;
 
-    @Column(nullable = false,name="user_id")
+    @Column(nullable = false, name = "user_id")
     private Integer idUser;
 
-    @Column(nullable = false,name="room_id")
+    @Column(nullable = false, name = "room_id")
     private Integer idRoom;
 
     public Long getId() {
@@ -91,5 +91,15 @@ public class Booking {
         service.getBookings().add(this);
     }
 
+    public Booking(Long id, String startDate, String endDate, Integer idUser, Integer idRoom, Set<Service> services) {
+        this.id = id;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.idUser = idUser;
+        this.idRoom = idRoom;
+        this.services = services;
+    }
 
+    public Booking() {
+    }
 }
