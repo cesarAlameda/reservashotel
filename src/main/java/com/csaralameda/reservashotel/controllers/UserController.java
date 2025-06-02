@@ -3,12 +3,15 @@ package com.csaralameda.reservashotel.controllers;
 import com.csaralameda.reservashotel.dto.UserDTO;
 import com.csaralameda.reservashotel.models.User;
 import com.csaralameda.reservashotel.repositories.UsersRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,12 +30,22 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Operation(
+            summary = "Lista todos los usuarios",
+            description = "Este endpoint permite listar todos los usuarios de la base de datos"
+    )
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Iterable<User> getUsers() {
         return usersRepository.findAll();
     }
 
+    @Operation(
+            summary = "Obtiene un usuario por ID",
+            description = "Este endpoint permite buscar un usuario en la base de datos usando su ID"
+    )
     @GetMapping("/{idUser}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> getUserById(@PathVariable("idUser") Long idUser) {
         Optional<User> userOpt = usersRepository.findById(idUser);
         return userOpt
@@ -43,29 +56,12 @@ public class UserController {
                 });
     }
 
-    @PostMapping
-    public ResponseEntity<Void> postUser(@Valid @RequestBody UserDTO userDTO) {
-        try {
-            log.info("Creando Usuario...");
-            User user = new User();
-            user.setUsername(userDTO.username());
-            user.setEmail(userDTO.email());
-            user.setRole(userDTO.role());
-            user.setPassword(passwordEncoder.encode(userDTO.password()));
-            usersRepository.save(user);
-            log.info("Usuario creado: {}", user.getUsername());
-            return ResponseEntity.status(HttpStatus.CREATED).build();
 
-        } catch (DataIntegrityViolationException dive) {
-            log.error("Violación de integridad al crear usuario {}: {}", userDTO.username(), dive.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
-        } catch (Exception e) {
-            log.error("Error inesperado al crear usuario {}", userDTO.username(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
+    @Operation(
+            summary = "Borrado de Usuario",
+            description = "Este endpoint permite eliminar usuarios en la base de datos usando su ID"
+    )
     @DeleteMapping("/{idUser}")
     public ResponseEntity<Void> deleteUser(@PathVariable("idUser") Long idUser) {
         log.info("Borrando Usuario...");
@@ -83,6 +79,10 @@ public class UserController {
     }
 
 
+    @Operation(
+            summary = "Editar Usuario",
+            description = "Este endpoint permite editar usuarios en la base de datos usando su ID"
+    )
     @PutMapping("/{idUser}")
     public ResponseEntity<Void> putUser(
             @PathVariable("idUser") Long idUser,

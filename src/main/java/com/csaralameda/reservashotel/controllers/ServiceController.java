@@ -4,12 +4,14 @@ package com.csaralameda.reservashotel.controllers;
 import com.csaralameda.reservashotel.dto.ServiceDTO;
 import com.csaralameda.reservashotel.models.Service;
 import com.csaralameda.reservashotel.repositories.ServiceRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -24,11 +26,21 @@ public class ServiceController {
         this.serviceRepository = serviceRepository;
     }
 
+
+    @Operation(
+            summary = "Lista todos los servicios",
+            description = "Este endpoint permite listar todos los servicios de la base de datos"
+    )
     @GetMapping
     public Iterable<Service> getService() {
         return serviceRepository.findAll();
     }
 
+
+    @Operation(
+            summary = "Obtiene un servicio por ID",
+            description = "Este endpoint permite buscar un servicio en la base de datos usando su ID"
+    )
     @GetMapping("/{idService}")
     public ResponseEntity<Service> getServiceId(@PathVariable("idService") Long idService) {
         Optional<Service> serviceOpt = serviceRepository.findById(idService);
@@ -40,13 +52,17 @@ public class ServiceController {
                 });
     }
 
+    @Operation(
+            summary = "Registro de un servicio",
+            description = "Este endpoint permite registrar servicios en la base de datos"
+    )
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public ResponseEntity<Void> postService(@Valid @RequestBody ServiceDTO serviceDTO) {
         try {
             log.info("Creando Servicio...");
             Service service = new Service();
-            //name, description
-
+   
             service.setName(serviceDTO.name());
             service.setDescription(serviceDTO.description());
 
