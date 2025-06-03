@@ -27,6 +27,7 @@ public class ServiceController {
     }
 
 
+
     @Operation(
             summary = "Lista todos los servicios",
             description = "Este endpoint permite listar todos los servicios de la base de datos"
@@ -81,7 +82,12 @@ public class ServiceController {
 
     }
 
+    @Operation(
+            summary = "Borrado de un servicio",
+            description = "Este endpoint permite borrar servicios en la base de datos"
+    )
     @DeleteMapping("/{idService}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public ResponseEntity<Void> deleteService(@PathVariable("idService") Long idService) {
         log.info("Borrando Servicio...");
         Optional<Service> serviceOpt = serviceRepository.findById(idService);
@@ -97,7 +103,13 @@ public class ServiceController {
         return ResponseEntity.noContent().build(); // 204 No Content
     }
 
+
+    @Operation(
+            summary = "Editado de un servicio",
+            description = "Este endpoint permite editar servicios en la base de datos"
+    )
     @PutMapping("/{idService}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public ResponseEntity<Void> putService(
             @PathVariable("idService") Long idService,
             @Valid @RequestBody ServiceDTO serviceDTO

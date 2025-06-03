@@ -5,12 +5,14 @@ import com.csaralameda.reservashotel.models.Room;
 import com.csaralameda.reservashotel.models.Service;
 import com.csaralameda.reservashotel.repositories.RoomRepository;
 import com.csaralameda.reservashotel.repositories.ServiceRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,13 +32,23 @@ public class RoomController {
         this.serviceRepository = serviceRepository;
     }
 
+    @Operation(
+            summary = "Lista todas las habitaciones",
+            description = "Este endpoint permite listar todos los servicios de la base de datos"
+    )
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public Iterable<Room> getRooms() {
         return this.roomRepository.findAll();
     }
 
 
+    @Operation(
+            summary = "Obtiene una habitación por ID",
+            description = "Este endpoint permite buscar una habitación en la base de datos usando su ID"
+    )
     @GetMapping("/{idRoom}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public ResponseEntity<Room> getRoombyId(@PathVariable("idRoom") Long idRoom) {
         Optional<Room> roomOpt = roomRepository.findById(idRoom);
         return roomOpt
@@ -48,13 +60,24 @@ public class RoomController {
 
     }
 
-    @GetMapping({"/available"}) //saber las habitaciones que están disponibles de cara al apartado front
+    @Operation(
+            summary = "Obtiene todas las habitaciones disponibles",
+            description = "Este endpoint permite buscar las habitaciones disponibles en este momento"
+    )
+    @GetMapping({"/available"}) //saber las habitaciones que están disponibles por si hubiera habitaciones con alguna incidencia
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public Iterable<Room> getRoomsAvaible() {
         ArrayList<Room> rooms = (ArrayList<Room>) this.roomRepository.buscarPorEstado();
         return rooms;
     }
 
+
+    @Operation(
+            summary = "Registro de Habitaciones",
+            description = "Este endpoint permite registrar habitaciones en la base de datos"
+    )
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public ResponseEntity<Void> postRoom(@Valid @RequestBody RoomDTO roomDTO) {
         try {
             log.info("Creando Habitacion...");
@@ -87,8 +110,12 @@ public class RoomController {
         }
     }
 
-
+    @Operation(
+            summary = "Borrado de Habitaciones",
+            description = "Este endpoint permite borrar habitaciones en la base de datos"
+    )
     @DeleteMapping("/{idRoom}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public ResponseEntity<Void> deleteRoom(@PathVariable("idRoom") Long idRoom) {
         log.info("Borrando habitacion...");
         Optional<Room> roomOpt = roomRepository.findById(idRoom);
@@ -105,8 +132,12 @@ public class RoomController {
 
     }
 
-
+    @Operation(
+            summary = "Editar Habitaciones",
+            description = "Este endpoint permite editar habitaciones en la base de datos"
+    )
     @PutMapping("/{idRoom}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public ResponseEntity<Void> putRoom(@PathVariable("idRoom") Long idRoom,
                                         @Valid @RequestBody RoomDTO roomDTO) {
         log.info("Actualizando Habitacion...");

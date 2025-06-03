@@ -4,14 +4,19 @@ import com.csaralameda.reservashotel.dto.BookingDTO;
 import com.csaralameda.reservashotel.models.Booking;
 import com.csaralameda.reservashotel.models.Room;
 import com.csaralameda.reservashotel.models.Service;
+import com.csaralameda.reservashotel.models.User;
 import com.csaralameda.reservashotel.repositories.BookingRepository;
 import com.csaralameda.reservashotel.repositories.RoomRepository;
+import com.csaralameda.reservashotel.repositories.UsersRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -30,7 +35,12 @@ public class BookingController {
         this.roomRepository = roomRepository;
     }
 
+    @Operation(
+            summary = "Obtiene una reserva por ID",
+            description = "Este endpoint permite buscar una reserva en la base de datos usando su ID"
+    )
     @GetMapping({"/{idBooking}"})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'RECEPCIONIST')")
     public ResponseEntity<Booking> getBookingById(@PathVariable("idBooking") Long idBooking) {
         Optional<Booking> booking = this.bookingRepository.findById(idBooking);
         if (booking.isEmpty()) {
@@ -41,6 +51,10 @@ public class BookingController {
         }
     }
 
+    @Operation(
+            summary = "Registro de reservas",
+            description = "Este endpoint permite registrar reservas en la base de datos"
+    )
     @PostMapping
     public ResponseEntity<Void> postUser(@Valid @RequestBody BookingDTO bookingDTO) {
         try {
@@ -78,7 +92,10 @@ public class BookingController {
         }
     }
 
-
+    @Operation(
+            summary = "Borrado de reservas",
+            description = "Este endpoint permite borrar reservas en la base de datos"
+    )
     @DeleteMapping("/{idBooking}")
     public ResponseEntity<Void> deleteBooking(@PathVariable("idBooking") Long idBooking) {
         log.info("Borrando Booking...");
@@ -96,9 +113,14 @@ public class BookingController {
         return ResponseEntity.noContent().build();//204 NO content
     }
 
-
+    @Operation(
+            summary = "Editar de reservas",
+            description = "Este endpoint permite editar reservas en la base de datos"
+    )
     @PutMapping("/{idBooking}")
     public ResponseEntity<Void> putBooking(@PathVariable("idBooking") Long idBooking, @Valid @RequestBody BookingDTO bookingDTO) {
+
+
 
         log.info("Actualizando Usuario...");
         Optional<Booking>bookingOptional=bookingRepository.findById(idBooking);
@@ -133,7 +155,6 @@ public class BookingController {
          }
 
          //idRoom ( por si se quiere cambiar de habitacion bajo las mismas condiciones de servicio y fecha, habría que comprobar si la habitacion está disponible)
-         //para comprobar que la habitacion está disponible simplemente listar como opciones solo habitaciones que tengan el available en true
          //de todos modos lo comprobaré a la hora de hacer el put para añadir robustez
          Integer idRoom=bookingDTO.idRoom();
          if(idRoom!=null || idRoom!=0){

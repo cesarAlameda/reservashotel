@@ -6,6 +6,7 @@ import com.csaralameda.reservashotel.dto.UserDTO;
 import com.csaralameda.reservashotel.models.User;
 import com.csaralameda.reservashotel.repositories.UsersRepository;
 import com.csaralameda.reservashotel.util.JWTUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,10 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
         this.jwtProperties = jwtProperties;
     }
-
+    @Operation(
+            summary = "Logueo de Usuario",
+            description = "Este endpoint permite loguearse a los usuarios"
+    )
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         User user = usersRepository.findByUsername(loginDTO.username()).orElse(null);
@@ -45,6 +49,11 @@ public class AuthController {
                 new TokenResponse(token)
         );
     }
+
+    @Operation(
+            summary = "Registro de Usuario",
+            description = "Este endpoint permite registrar usuarios en la base de datos"
+    )
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO) {
         try {
