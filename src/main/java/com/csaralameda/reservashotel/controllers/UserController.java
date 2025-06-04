@@ -4,7 +4,6 @@ import com.csaralameda.reservashotel.dto.UserDTO;
 import com.csaralameda.reservashotel.models.User;
 import com.csaralameda.reservashotel.repositories.UsersRepository;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +55,6 @@ public class UserController {
                 });
     }
 
-
-
     @Operation(
             summary = "Borrado de Usuario",
             description = "Este endpoint permite eliminar usuarios en la base de datos usando su ID"
@@ -72,12 +69,10 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-
         usersRepository.deleteById(idUser);
         log.info("Usuario con id {} borrado correctamente", idUser);
         return ResponseEntity.noContent().build(); // 204 No Content
     }
-
 
     @Operation(
             summary = "Editar Usuario",
@@ -95,37 +90,14 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-
         try {
             User userObj = usersOptional.get();
 
-            String name = userDTO.username();
-            if (name != null) {
-                if (!name.isBlank()) {
-                    userObj.setUsername(name);
-                }
-            } else {
-                log.info("Nombre nulo o en blanco a la hora de actualizar el usuario");
-            }
-
-            String email = userDTO.email();
-            if (email != null) {
-                if (!email.isBlank()) {
-                    userObj.setEmail(email);
-                }
-            } else {
-                log.info("Email nulo o en blanco a la hora de actualizar el usuario");
-            }
-
-            String password = userDTO.password();
-            if (password != null) {
-                if (!password.isBlank()) {
-                    userObj.setPassword(passwordEncoder.encode(password));
-                }
-            } else {
-                log.info("Pass nula o en blanco a la hora de actualizar el usuario");
-            }
-            //EL USUARIO NO DEBERIA DE TENER LA POSIBILIDAD DE CAMBIAR DE ROL, AL MENOS NO DESDE UN ENDPOINT
+            //solo actualizo los campos permitidos validados en dto
+            userObj.setUsername(userDTO.username());
+            userObj.setEmail(userDTO.email());
+            userObj.setPassword(passwordEncoder.encode(userDTO.password()));
+            // userObj.setRole(userDTO.role()); //no cambiar el rol desde aquí
 
             usersRepository.save(userObj);
             log.info("Usuario {} actualizado correctamente", idUser);
@@ -140,4 +112,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
 }
