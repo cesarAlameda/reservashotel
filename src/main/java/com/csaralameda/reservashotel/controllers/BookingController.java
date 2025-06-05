@@ -132,27 +132,14 @@ public class BookingController {
 
      try{
          Booking bookingObj=bookingOptional.get();
-         //Long id, String startDate, String endDate, Integer idUser, Integer idRoom, Set< Service > services
+         //String startDate, String endDate, Integer idUser, Integer idRoom, Set< Service > services
 
          //startDate
-         String startDate=bookingDTO.startDate();
-         if (startDate != null) {
-             if (!startDate.isBlank()) {
-                 bookingObj.setStartDate(startDate);
-             }
-         } else {
-             log.info("FECHA DE ENTRADA nulo o en blanco a la hora de actualizar la reserva");
-         }
+         bookingObj.setStartDate(bookingDTO.startDate());
 
          //endDate
-         String endDate=bookingDTO.endDate();
-         if (endDate != null) {
-             if (!endDate.isBlank()) {
-                 bookingObj.setEndDate(endDate);
-             }
-         } else {
-             log.info("FECHA DE ENTRADA nulo o en blanco a la hora de actualizar la reserva");
-         }
+        bookingObj.setEndDate(bookingDTO.endDate());
+
 
          //idRoom ( por si se quiere cambiar de habitacion bajo las mismas condiciones de servicio y fecha, habría que comprobar si la habitacion está disponible)
          //de todos modos lo comprobaré a la hora de hacer el put para añadir robustez

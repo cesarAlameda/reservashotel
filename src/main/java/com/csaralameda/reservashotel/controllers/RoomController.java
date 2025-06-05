@@ -153,34 +153,11 @@ public class RoomController {
             Room roomObj = roomOptional.get();
 
             //type
-            String type = roomDTO.type();
-            if (type != null) {
-                if (!type.isBlank()) {
-                    roomObj.setType(type);
-                }
-            } else {
-                log.info("Tipo de habitación nulo o en blanco al actualizar");
-            }
-
+            roomObj.setType(roomDTO.type());
             //price
-            Double price = roomDTO.price();
-            if (price != null) {
-                if (price > 0) {
-                    roomObj.setPrice(price);
-                }
-            } else {
-                log.info("Precio nulo al actualizar");
-            }
-
+            roomObj.setPrice(roomDTO.price());
             //capacity
-            Integer capacity = roomDTO.capacity();
-            if (capacity != null) {
-                if (capacity > 0) {
-                    roomObj.setCapacity(capacity);
-                }
-            } else {
-                log.info("Capacidad nula al actualizar");
-            }
+            roomObj.setCapacity(roomDTO.capacity());
 
             //available (nunca será null puesto que es un boolean primitivo)
             roomObj.setAvailable(roomDTO.isAvailable());

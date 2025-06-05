@@ -27,7 +27,6 @@ public class ServiceController {
     }
 
 
-
     @Operation(
             summary = "Lista todos los servicios",
             description = "Este endpoint permite listar todos los servicios de la base de datos"
@@ -63,7 +62,7 @@ public class ServiceController {
         try {
             log.info("Creando Servicio...");
             Service service = new Service();
-   
+
             service.setName(serviceDTO.name());
             service.setDescription(serviceDTO.description());
 
@@ -125,23 +124,9 @@ public class ServiceController {
         try {
             Service serviceObj = serviceOptional.get();
 
-            String name = serviceDTO.name();
-            if (name != null) {
-                if (!name.isBlank()) {
-                    serviceObj.setName(name);
-                }
-            } else {
-                log.info("Nombre nulo o en blanco a la hora de actualizar el servicio");
-            }
 
-            String desc = serviceDTO.description();
-            if (desc != null) {
-                if (!desc.isBlank()) {
-                    serviceObj.setDescription(desc);
-                }
-            } else {
-                log.info("Descripcion nula o en blanco a la hora de actualizar el servicio");
-            }
+            serviceObj.setName(serviceDTO.name());
+            serviceObj.setDescription(serviceDTO.description());
 
 
             serviceRepository.save(serviceObj);
