@@ -2,7 +2,10 @@ package com.csaralameda.reservashotel.controllers;
 
 
 import com.csaralameda.reservashotel.dto.ServiceDTO;
+import com.csaralameda.reservashotel.dto.ServicePatchDTO;
+import com.csaralameda.reservashotel.dto.UserPatchDTO;
 import com.csaralameda.reservashotel.models.Service;
+import com.csaralameda.reservashotel.models.User;
 import com.csaralameda.reservashotel.repositories.ServiceRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -145,6 +148,37 @@ public class ServiceController {
 
 
     }
+    @Operation(
+            summary = "Actualiza parcialmente un servicio",
+            description = "Este endpoint permite actualizar campos específicos de un servicio"
+    )
+    @PatchMapping("/{idService}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Void> patchService(
+            @PathVariable("idService") Long idService,
+            @RequestBody ServicePatchDTO patchDTO
+    ) {
+        log.info("Actualización parcial del servicio con id {}", idService);
 
+        Optional<Service> serviceOpt = serviceRepository.findById(idService);
+        if (serviceOpt.isEmpty()) {
+            log.warn("Servicio con id {} no encontrado", idService);
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Service service = serviceOpt.get();
+            patchDTO.applyTo(service);
+            serviceRepository.save(service);
+            log.info("Servicio {} actualizado parcialmente con éxito", idService);
+            return ResponseEntity.ok().build();
+        } catch (DataIntegrityViolationException dive) {
+            log.error("Error de integridad al actualizar parcialmente el servicio: {}", dive.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (Exception e) {
+            log.error("Error inesperado al hacer PATCH al servicio {}", idService, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }

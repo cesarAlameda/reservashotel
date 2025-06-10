@@ -1,6 +1,7 @@
 package com.csaralameda.reservashotel.controllers;
 
 import com.csaralameda.reservashotel.dto.UserDTO;
+import com.csaralameda.reservashotel.dto.UserPatchDTO;
 import com.csaralameda.reservashotel.models.User;
 import com.csaralameda.reservashotel.repositories.UsersRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -112,6 +113,37 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @Operation(
+            summary = "Actualiza parcialmente un usuario",
+            description = "Este endpoint permite actualizar campos específicos de un usuario"
+    )
+    @PatchMapping("/{idUser}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Void> patchUser(
+            @PathVariable("idUser") Long idUser,
+            @RequestBody UserPatchDTO patchDTO
+    ) {
+        log.info("Actualización parcial del usuario con id {}", idUser);
 
+        Optional<User> userOpt = usersRepository.findById(idUser);
+        if (userOpt.isEmpty()) {
+            log.warn("Usuario con id {} no encontrado", idUser);
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            User user = userOpt.get();
+            patchDTO.applyTo(user, passwordEncoder);
+            usersRepository.save(user);
+            log.info("Usuario {} actualizado parcialmente con éxito", idUser);
+            return ResponseEntity.ok().build();
+        } catch (DataIntegrityViolationException dive) {
+            log.error("Error de integridad al actualizar parcialmente el usuario: {}", dive.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (Exception e) {
+            log.error("Error inesperado al hacer PATCH al usuario {}", idUser, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }
